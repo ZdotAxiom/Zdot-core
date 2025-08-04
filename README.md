@@ -93,3 +93,36 @@ Ż names the rule of return: measure the undefined gap (π), let its gradient p
 - **Imprint:** durable trace that enlarges D for future runs.
 
 *Ż operationalizes the undefined: measured gap (π), computable direction (P), minimal fix (R).*
+
+
+### Defaults & Assumptions
+- **Metric for ∇π:** use the metric induced by your π (e.g., Euclidean for compression scores; Fisher metric for KL; OT geometry for W₂).
+- **Definable set D:** items with `π(x) ≤ ε`. Start with **ε = 0.2** (KL nats) / **ε = 20** (bytes of compressed gap) / **ε = 0.1** (normalized W₂), then tune by domain.
+- **Alarm threshold τ:** trigger collapse alarm if `π > 3ε` **or** `‖P‖` jumps by **> 2σ** (rolling window).
+- **Idempotence check:** enforce (or test) `R∘R = R`. If violated, tighten constraints or increase ε slightly.
+
+### π Profiles (choose one)
+- **CP (compression gap):** `π(x)=max(0, K_gzip(x) − K_ref)` — quick, language-agnostic.
+- **IGP (statistical):** `π(x)=D_KL(p_x‖p_θ)` — differentiable, use Fisher metric for ∇.
+- **OTD (geometric):** `π(x)=W₂(μ_x, μ_θ)` — handles support shifts; compute with Sinkhorn.
+
+> Log the profile as `pi_profile=cp|igp|otd` with all hyper-params per run.
+
+### Minimal Loop (pseudo)
+1. Measure `π(x)` and `‖P‖ = ‖−∇π(x)‖`.
+2. If `π ≤ ε`: accept x (x ∈ D).
+3. If `π > ε` or alarm by `‖P‖`: apply **R** = smallest admissible change (edit/summary/model update) s.t. `π ≤ ε`.
+4. **Imprint**: store the delta (schema/feature/weight) so D expands; re-evaluate next inputs.
+
+### Tiny Worked Example (CP)
+- Input text T has `π(T)=42` (bytes above reference).  
+- Alarm (π > ε=20). Apply **R** = “truncate 10% tail iteratively” → T′ with `π(T′)=18`.  
+- Accept T′ (now in D); record “tail-truncate@10%” as an imprint for similar cases.
+
+### Failure & Recovery
+- **False alarm:** if alarm rate > 5% with no QoS gain, raise ε or smooth `‖P‖` with longer window.
+- **Under-detection:** if post-projection errors persist, lower ε or strengthen R constraints.
+- **Non-convergence of R:** cap steps; fallback to coarser R (e.g., stronger summary), log as open issue.
+
+### Notes on “Negation-Sacrifice (π)”
+π is the **minimal information-theoretic cost** to cancel undefinedness—not a mystical notion. It can be paid by **discarding bits** (compression/summary) or **adding structure** (parameters, features, axioms) so the item becomes verifiable in D.
