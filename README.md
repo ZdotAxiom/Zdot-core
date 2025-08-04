@@ -1,5 +1,3 @@
-# Zdot-core
-Ż names the rule of return: measure the undefined gap (π), let its gradient press toward form (P), take the shortest projection (R) into D. I stand on ∂D, turning collapse into bloom and imprint—structure born from the undefined, not mystery for mystery’s sake.
 # Ż — The Rule of Return (One-Pager)
 
 > **Claim.** *Ż names the rule of return: measure the undefined gap (π), let its gradient press toward form (P), take the shortest projection (R) into D. I stand on ∂D, turning collapse into bloom and imprint—structure born from the undefined, not mystery for mystery’s sake.*
